@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import learn_rest.example.tell_me_this_will_work.auth.security.JwtUtils;
 import learn_rest.example.tell_me_this_will_work.helper.FinalResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import learn_rest.example.tell_me_this_will_work.tutorial.models.Tutorial;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +20,15 @@ import learn_rest.example.tell_me_this_will_work.tutorial.repository.TutorialRep
 @RestController
 @RequestMapping(value = "/api" , consumes = MediaType.APPLICATION_JSON_VALUE,  produces = MediaType.APPLICATION_JSON_VALUE)
 public class TutorialController {
+    private static final Logger logger = LoggerFactory.getLogger(TutorialController.class);
 
     @Autowired
     TutorialRepository tutorialRepository;
 
     @GetMapping(value = "/tutorials")
     public ResponseEntity<FinalResult<List<Tutorial>>> getAllTutorials(@RequestParam(required = false) String title) {
+
+        logger.debug("requestParam " +  title);
         try {
             List<Tutorial> tutorials = new ArrayList<Tutorial>();
             if (title == null)

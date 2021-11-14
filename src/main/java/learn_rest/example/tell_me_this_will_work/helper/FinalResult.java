@@ -2,13 +2,13 @@ package learn_rest.example.tell_me_this_will_work.helper;
 
 import java.util.Objects;
 
-class FinalResult<T> {
+public class FinalResult<T> {
     boolean success;
-    String statusCode;
-    String message;
+    public String statusCode;
+    public String message;
     T data;
 
-    FinalResult(boolean success, String statusCode, String message, T data) {
+    public FinalResult(boolean success, String statusCode, String message, T data) {
         this.success = success;
         this.statusCode = statusCode;
         this.message = message;
