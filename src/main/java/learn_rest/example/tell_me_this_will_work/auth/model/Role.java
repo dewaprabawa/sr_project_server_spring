@@ -1,9 +1,9 @@
-package models;
+package learn_rest.example.tell_me_this_will_work.auth.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collation = "roles")
+@Document(collection = "roles")
 public class Role {
     @Id
     private String id;
@@ -29,6 +29,5 @@ public class Role {
     public Role getRoleName() {
         return roleName;
     }
-
 
 }

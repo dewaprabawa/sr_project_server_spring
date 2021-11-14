@@ -1,9 +1,9 @@
-package models;
+package learn_rest.example.tell_me_this_will_work.tutorial.models;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collation = "tutorials")
+@Document(collection = "tutorials")
 public class Tutorial {
     @Id
     private String id;
