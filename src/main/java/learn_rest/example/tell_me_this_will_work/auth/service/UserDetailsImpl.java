@@ -41,6 +41,15 @@ public class UserDetailsImpl implements UserDetails {
     @JsonIgnore
     private String password;
 
+
+    public String getId() {
+        return id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
