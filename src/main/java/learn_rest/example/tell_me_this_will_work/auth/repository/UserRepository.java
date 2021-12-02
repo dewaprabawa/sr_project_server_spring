@@ -1,7 +1,6 @@
 package learn_rest.example.tell_me_this_will_work.auth.repository;
 
 import learn_rest.example.tell_me_this_will_work.auth.model.User;
-import learn_rest.example.tell_me_this_will_work.auth.model.Role;
 import java.util.Optional;
 import org.springframework.data.mongodb.repository.MongoRepository;
 

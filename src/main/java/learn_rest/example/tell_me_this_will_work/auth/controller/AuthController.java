@@ -9,7 +9,7 @@ import learn_rest.example.tell_me_this_will_work.auth.model.Role;
 import learn_rest.example.tell_me_this_will_work.auth.model.User;
 import learn_rest.example.tell_me_this_will_work.auth.payload.request.response.JwtResponse;
 import learn_rest.example.tell_me_this_will_work.helper.FinalResult;
-import learn_rest.example.tell_me_this_will_work.helper.ROLE;
+import learn_rest.example.tell_me_this_will_work.helper.ERole;
 import learn_rest.example.tell_me_this_will_work.auth.payload.request.LoginRequest;
 import learn_rest.example.tell_me_this_will_work.auth.payload.request.SignupRequest;
 import learn_rest.example.tell_me_this_will_work.auth.repository.UserRepository;
@@ -45,7 +45,7 @@ public class AuthController {
     @Autowired
     JwtUtils jwtUtils;
 
-    @PostMapping("/signin")
+    @PostMapping("/signIn")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
@@ -66,14 +66,33 @@ public class AuthController {
                 roles));
     }
 
-    @PostMapping("/signup")
+    @GetMapping("/getCurrentUser")
+    public ResponseEntity<?> getCurrentUser() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String jwt = jwtUtils.generateJwtToken(authentication);
+
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        List<String> roles = userDetails.getAuthorities().stream()
+                .map(item -> item.getAuthority())
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(new JwtResponse(jwt,
+                userDetails.getId(),
+                userDetails.getUsername(),
+                userDetails.getEmail(),
+                roles));
+    }
+
+
+    @PostMapping("/signUp")
     public ResponseEntity<FinalResult<String>> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             boolean isSuccess = false;
             String statusCode = "Username_ALREADY_USED";
             String message = "Username is already taken!";
 
-            var finalResult = new FinalResult(isSuccess, statusCode, message, null);
+            FinalResult<String> finalResult = new FinalResult<String>(isSuccess, statusCode, message, null);
             return ResponseEntity
                     .badRequest()
                     .body(finalResult);
@@ -84,7 +103,7 @@ public class AuthController {
             String statusCode = "EMAIL_ALREADY_USED";
             String message = "Email is already taken!";
 
-            var finalResult = new FinalResult(isSuccess, statusCode, message, null);
+            FinalResult<String> finalResult = new FinalResult<String>(isSuccess, statusCode, message, null);
             return ResponseEntity
                     .badRequest()
                     .body(finalResult);
@@ -99,26 +118,26 @@ public class AuthController {
         Set<Role> roles = new HashSet<>();
 
         if (strRoles == null) {
-            Role userRole = roleRepository.findByName(ROLE.ROLE_USER)
+            Role userRole = roleRepository.findByName(ERole.ROLE_USER)
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
             roles.add(userRole);
         } else {
             strRoles.forEach(role -> {
                 switch (role) {
                     case "admin":
-                        Role adminRole = roleRepository.findByName(ROLE.ROLE_ADMIN)
+                        Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roles.add(adminRole);
 
                         break;
                     case "mod":
-                        Role modRole = roleRepository.findByName(ROLE.ROLE_MODERATOR)
+                        Role modRole = roleRepository.findByName(ERole.ROLE_MODERATOR)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roles.add(modRole);
 
                         break;
                     default:
-                        Role userRole = roleRepository.findByName(ROLE.ROLE_USER)
+                        Role userRole = roleRepository.findByName(ERole.ROLE_USER)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roles.add(userRole);
                 }
@@ -132,8 +151,9 @@ public class AuthController {
         String statusCode = "REGISTER_SUCCESSFULLY";
         String message = "User registered successfully!";
 
-        var finalResult = new FinalResult(isSuccess, statusCode, message, null);
+        FinalResult<String> finalResult = new FinalResult<String>(isSuccess, statusCode, message, null);
 
         return ResponseEntity.ok(finalResult);
     }
+
 }
