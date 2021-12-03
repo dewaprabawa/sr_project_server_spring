@@ -66,7 +66,7 @@ public class AuthController {
                 roles));
     }
 
-    @GetMapping("/getCurrentUser")
+    @GetMapping("/user")
     public ResponseEntity<?> getCurrentUser() {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
