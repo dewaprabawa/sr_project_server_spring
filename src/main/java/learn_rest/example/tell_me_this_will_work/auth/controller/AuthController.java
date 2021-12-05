@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 import learn_rest.example.tell_me_this_will_work.auth.model.Role;
 import learn_rest.example.tell_me_this_will_work.auth.model.User;
-import learn_rest.example.tell_me_this_will_work.auth.payload.request.response.JwtResponse;
+import learn_rest.example.tell_me_this_will_work.auth.payload.request.response.UserResponse;
 import learn_rest.example.tell_me_this_will_work.helper.FinalResult;
 import learn_rest.example.tell_me_this_will_work.helper.ERole;
 import learn_rest.example.tell_me_this_will_work.auth.payload.request.LoginRequest;
@@ -59,30 +59,13 @@ public class AuthController {
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok(new JwtResponse(jwt,
+        return ResponseEntity.ok(new UserResponse(jwt,
                 userDetails.getId(),
                 userDetails.getUsername(),
                 userDetails.getEmail(),
                 roles));
     }
 
-    @GetMapping("/user")
-    public ResponseEntity<?> getCurrentUser() {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String jwt = jwtUtils.generateJwtToken(authentication);
-
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(item -> item.getAuthority())
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(new JwtResponse(jwt,
-                userDetails.getId(),
-                userDetails.getUsername(),
-                userDetails.getEmail(),
-                roles));
-    }
 
 
     @PostMapping("/signUp")

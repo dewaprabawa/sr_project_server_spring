@@ -8,6 +8,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import com.mongodb.lang.Nullable;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -30,6 +31,9 @@ public class User {
     @NotBlank
     @Size(max = 120)
     private String password;
+
+    @Nullable
+    private String profileImageUrl;
 
     @DBRef
     private Set<Role> roles = new HashSet<>();
@@ -70,7 +74,6 @@ public class User {
         this.email = email;
     }
 
-
     public String getPassword() {
         return password;
     }
@@ -93,5 +96,14 @@ public class User {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    @Nullable
+    public String getProfileImageUrl() {
+        return profileImageUrl;
+    }
+
+    public void setProfileImageUrl(@Nullable String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
     }
 }

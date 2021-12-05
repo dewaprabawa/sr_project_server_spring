@@ -1,19 +1,30 @@
 package learn_rest.example.tell_me_this_will_work.auth.payload.request.response;
 import java.util.List;
-public class JwtResponse {
+
+public class UserResponse {
     private String token;
     private String type = "Bearer";
     private String id;
     private String username;
     private String email;
     private List<String> roles;
+    private String profileImageUrl;
 
-    public JwtResponse(String accessToken, String id, String username, String email, List<String> roles) {
+    public UserResponse(String accessToken, String id, String username, String email, List<String> roles) {
         this.token = accessToken;
         this.id = id;
         this.username = username;
         this.email = email;
         this.roles = roles;
+    }
+
+    public UserResponse(String accessToken, String id, String username, String email, List<String> roles, String profileImageUrl) {
+        this.token = accessToken;
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.roles = roles;
+        this.profileImageUrl = profileImageUrl;
     }
 
     public String getAccessToken() {
@@ -58,5 +69,13 @@ public class JwtResponse {
 
     public List<String> getRoles() {
         return roles;
+    }
+
+    public String getProfileImageUrl() {
+        return profileImageUrl;
+    }
+
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
     }
 }
