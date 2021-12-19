@@ -1,15 +1,18 @@
 package learn_rest.example.tell_me_this_will_work.helper;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Objects;
 
 public class FinalResult<T> {
-    boolean success;
+    Map<String, Object> success;
     public String statusCode;
     public String message;
     T data;
 
     public FinalResult(boolean success, String statusCode, String message, T data) {
-        this.success = success;
+        this.success = Collections.singletonMap("success", success);
         this.statusCode = statusCode;
         this.message = message;
         this.data = data;
@@ -17,7 +20,7 @@ public class FinalResult<T> {
 
 
     public void setSuccess(boolean success) {
-        this.success = success;
+        this.success = Collections.singletonMap("success",success);
     }
 
     public void setMessage(String message) {
@@ -40,13 +43,15 @@ public class FinalResult<T> {
         return success == that.success && Objects.equals(statusCode, that.statusCode) && Objects.equals(message, that.message) && Objects.equals(data, that.data);
     }
 
-    public boolean getSuccess(boolean success) {
-        return success;
-    }
+
 
     @Override
     public int hashCode() {
         return Objects.hash(success, statusCode, message, data);
+    }
+
+    public boolean getSuccess() {
+        return (boolean) this.success.get("success");
     }
 
     public String getMessage() {

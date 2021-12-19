@@ -72,6 +72,7 @@
 			<artifactId>firebase-admin</artifactId>
 			<version>8.0.0</version>
 		</dependency>
+
 	</dependencies>
 
 	<build>

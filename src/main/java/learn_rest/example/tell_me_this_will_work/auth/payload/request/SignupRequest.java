@@ -15,11 +15,21 @@ public class SignupRequest {
     @Email
     private String email;
 
+    @NotBlank
+    @Size(max = 20)
+    private String phoneNumber;
+
+
+    @NotBlank
+    @Size(max = 5)
+    private String countryCode;
+
     private Set<String> roles;
 
     @NotBlank
     @Size(min = 6, max = 40)
     private String password;
+
 
     public String getUsername() {
         return username;
@@ -51,5 +61,21 @@ public class SignupRequest {
 
     public void setRole(Set<String> roles) {
         this.roles = roles;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getCountryCode() {
+        return countryCode;
+    }
+
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
     }
 }
