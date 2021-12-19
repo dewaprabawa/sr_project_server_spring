@@ -10,21 +10,19 @@ public class UserResponse {
     private List<String> roles;
     private String profileImageUrl;
 
-    public UserResponse(String accessToken, String id, String username, String email, List<String> roles) {
-        this.token = accessToken;
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.roles = roles;
-    }
+    private String phoneNumber;
+    private String countryCode;
+    
 
-    public UserResponse(String accessToken, String id, String username, String email, List<String> roles, String profileImageUrl) {
+    public UserResponse(String accessToken, String id, String username, String email, List<String> roles, String profileImageUrl, String countryCode, String phoneNumber) {
         this.token = accessToken;
         this.id = id;
         this.username = username;
         this.email = email;
         this.roles = roles;
         this.profileImageUrl = profileImageUrl;
+        this.countryCode = countryCode;
+        this.phoneNumber = phoneNumber;
     }
 
     public String getAccessToken() {
@@ -78,4 +76,22 @@ public class UserResponse {
     public void setProfileImageUrl(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
     }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getCountryCode() {
+        return countryCode;
+    }
+
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
+    }
+
+
 }

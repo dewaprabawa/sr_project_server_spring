@@ -23,6 +23,15 @@ public class User {
     @Size(max = 20)
     private String username;
 
+
+    @NotBlank
+    @Size(max = 20)
+    private String phoneNumber;
+
+    @NotBlank
+    @Size(max = 5)
+    private String countryCode;
+
     @NotBlank
     @Size(max = 50)
     @Email
@@ -43,10 +52,12 @@ public class User {
 
     }
 
-    public User(String username, String email, String password){
-     this.username = username;
-     this.email = email;
-     this.password = password;
+    public User(String username, String email, String password,String countryCode, String phoneNumber){
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.countryCode = countryCode;
+        this.phoneNumber = phoneNumber;
     }
 
     @Override
@@ -54,7 +65,7 @@ public class User {
         if (this == o) return true;
         if (!(o instanceof User)) return false;
         User user = (User) o;
-        return Objects.equals(getId(), user.getId()) && Objects.equals(username, user.username) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(roles, user.roles);
+        return Objects.equals(getId(), user.getId()) && Objects.equals(getUsername(), user.getUsername()) && Objects.equals(getPhoneNumber(), user.getPhoneNumber()) && Objects.equals(getCountryCode(), user.getCountryCode()) && Objects.equals(getEmail(), user.getEmail()) && Objects.equals(getPassword(), user.getPassword()) && Objects.equals(getProfileImageUrl(), user.getProfileImageUrl()) && Objects.equals(getRoles(), user.getRoles());
     }
 
     @Override
@@ -98,12 +109,27 @@ public class User {
         this.roles = roles;
     }
 
-    @Nullable
+
     public String getProfileImageUrl() {
         return profileImageUrl;
     }
 
-    public void setProfileImageUrl(@Nullable String profileImageUrl) {
+    public void setProfileImageUrl(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getCountryCode() {
+        return countryCode;
+    }
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
     }
 }

@@ -1,52 +1,51 @@
-package learn_rest.example.tell_me_this_will_work.tutorial.controller;
+package learn_rest.example.tell_me_this_will_work.pets.controller;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import learn_rest.example.tell_me_this_will_work.auth.security.JwtUtils;
 import learn_rest.example.tell_me_this_will_work.helper.FinalResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
-import learn_rest.example.tell_me_this_will_work.tutorial.models.Tutorial;
+import learn_rest.example.tell_me_this_will_work.pets.models.Pet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import learn_rest.example.tell_me_this_will_work.tutorial.repository.TutorialRepository;
+import learn_rest.example.tell_me_this_will_work.pets.repository.PetRepository;
 
 @CrossOrigin(origins = "http://127.0.0.1:8080")
 @RestController
 @RequestMapping(value = "/api" , consumes = MediaType.APPLICATION_JSON_VALUE,  produces = MediaType.APPLICATION_JSON_VALUE)
-public class TutorialController {
-    private static final Logger logger = LoggerFactory.getLogger(TutorialController.class);
+public class PetController {
+    private static final Logger logger = LoggerFactory.getLogger(PetController.class);
 
     @Autowired
-    TutorialRepository tutorialRepository;
+    PetRepository petRepository;
 
-    @GetMapping(value = "/tutorials")
-    public ResponseEntity<FinalResult<List<Tutorial>>> getAllTutorials(@RequestParam(required = false) String title) {
+    @GetMapping(value = "/pets")
+    public ResponseEntity<FinalResult<List<Pet>>> getAllPets(@RequestParam(required = false) String name) {
 
-        logger.debug("requestParam " +  title);
+        logger.debug("requestParam " +  name);
         try {
-            List<Tutorial> tutorials = new ArrayList<Tutorial>();
-            if (title == null)
-                tutorialRepository.findAll().forEach(tutorials::add);
+            List<Pet> pets = new ArrayList<Pet>();
+            if (name == null)
+                petRepository.findAll().forEach(pets::add);
             else
-                tutorialRepository.findByTitleContaining(title).forEach(tutorials::add);
+                petRepository.findByNameContaining(name).forEach(pets::add);
 
-            if (tutorials.isEmpty()) {
+            if (pets.isEmpty()) {
                 final String message = "THE DATA IS EMPTY";
                 final String statusCode = "THE_DATA_IS_EMPTY";
                 var res = new FinalResult(true, message, statusCode, null);
 
-                return new ResponseEntity<>(res, HttpStatus.NO_CONTENT);
+                return new ResponseEntity<>(res, HttpStatus.OK);
             }
 
             final String message = "THE DATA IS EXISTING";
             final String statusCode = "THE_DATA_IS_EXISTING";
-            var res = new FinalResult(true, message, statusCode, tutorials);
+            var res = new FinalResult(true, message, statusCode, pets);
             return new ResponseEntity<>(res, HttpStatus.OK);
         } catch (Exception e) {
             System.out.print(e.toString());
@@ -54,19 +53,19 @@ public class TutorialController {
         }
     }
 
-    @GetMapping("/tutorials/{id}")
-    public ResponseEntity<FinalResult<Tutorial>> getTutorialById(@PathVariable("id") String id) {
+    @GetMapping("/pet/{id}")
+    public ResponseEntity<FinalResult<Pet>> getPetById(@PathVariable("id") String id) {
        try{
-           Optional<Tutorial> tutorial = tutorialRepository.findById(id);
+           Optional<Pet> tutorial = petRepository.findById(id);
            if(tutorial.isPresent()){
-               String message = "SUCCESS GET SPECIFIC TUTORIAL";
-               String statusCode = "SUCCESS_GET_TUTORIAL";
-               Tutorial data = tutorial.get();
+               String message = "SUCCESS GET SPECIFIC PET";
+               String statusCode = "SUCCESS_GET_PET";
+               Pet data = tutorial.get();
                var result = new FinalResult(true, message, statusCode, data);
                return new ResponseEntity<>(result, HttpStatus.OK);
            }else{
-               String message = "TUTORIAL NOT FOUND";
-               String statusCode = "FAILED_GET_TUTORIAL";
+               String message = "PET NOT FOUND";
+               String statusCode = "FAILED_GET_PET";
                var result = new FinalResult(true, message, statusCode, null);
                return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
            }
@@ -76,13 +75,13 @@ public class TutorialController {
        }
     }
 
-    @PostMapping(value = "/tutorials", consumes = MediaType.APPLICATION_JSON_VALUE,  produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<FinalResult<Tutorial>> createTutorial(@RequestBody Tutorial tutorial) {
+    @PostMapping(value = "/pet", consumes = MediaType.APPLICATION_JSON_VALUE,  produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<FinalResult<Pet>> createPetData(@RequestBody Pet pet) {
         try {
-            var _t = new Tutorial(tutorial.getTitle(), tutorial.getDescription(), false);
-            Tutorial _tutorial = tutorialRepository.save(_t);
-            String message = "SUCCESS CREATE TUTORIAL";
-            String statusCode = "SUCCESS_CREATE_TUTORIAL";
+            var _t = new Pet(pet.getName(), pet.getDescription(), pet.getAge(), pet.getCategory(),pet.getImageURL(),false, pet.getKind());
+            Pet _pet = petRepository.save(_t);
+            String message = "SUCCESS CREATE PET";
+            String statusCode = "SUCCESS_CREATE_PET";
             var result = new FinalResult(true, message, statusCode, _t);
             System.out.print(result.message);
             System.out.print(result.statusCode);
@@ -93,13 +92,13 @@ public class TutorialController {
         }
     }
 
-    @PutMapping("/tutorials/{id}")
-    public ResponseEntity<FinalResult<Tutorial>> updateTutorial(@PathVariable("id") String id, @RequestBody Tutorial tutorial) {
+    @PutMapping("/pet/{id}")
+    public ResponseEntity<FinalResult<Pet>> updatePetData(@PathVariable("id") String id, @RequestBody Pet tutorial) {
        try{
-           Optional<Tutorial> _tutorial = tutorialRepository.findById(id);
+           Optional<Pet> _tutorial = petRepository.findById(id);
            if(_tutorial.isPresent()){
                var updatedTutorial = _tutorial.get();
-               updatedTutorial.setTitle(updatedTutorial.getTitle());
+               updatedTutorial.setName(updatedTutorial.getName());
                updatedTutorial.setDescription(updatedTutorial.getDescription());
                updatedTutorial.setPublished(updatedTutorial.isPublished());
                final String message = "SUCCESS UPDATE DATA";
@@ -115,45 +114,45 @@ public class TutorialController {
        }
     }
 
-    @DeleteMapping("/tutorial/{id}")
-    public ResponseEntity<FinalResult<Tutorial>> deleteTutorial(@PathVariable("id") String id) {
+    @DeleteMapping("/pet/{id}")
+    public ResponseEntity<FinalResult<Pet>> deleteDeletePet(@PathVariable("id") String id) {
         try {
-         tutorialRepository.deleteById(id);
+         petRepository.deleteById(id);
             String message = "SUCCESS DELETING FILE";
-            String statusCode = "SUCCESS_DELETE_TUTORIAL";
+            String statusCode = "SUCCESS_DELETE_PET";
             var result = new FinalResult(true, message, statusCode, null);
          return new ResponseEntity<>(result, HttpStatus.OK);
         }catch (Exception e){
             System.out.print(e.toString());
             String message = "DELETING FILE FAILED";
-            String statusCode = "FAILED_DELETE_TUTORIAL";
+            String statusCode = "FAILED_DELETE_PET";
             var result = new FinalResult(false, message, statusCode, null);
             return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
         }
     }
 
-    @DeleteMapping("/tutorials")
-    public ResponseEntity<FinalResult<Tutorial>> deleteAllTutorial() {
+    @DeleteMapping("/pets")
+    public ResponseEntity<FinalResult<Pet>> deleteAllPets() {
 
         try{
-            tutorialRepository.deleteAll();
-            final String message = "SUCCESS DELETING ALL FILE";
-            final String statusCode = "SUCCESS_DELETE_ALL_FILE";
+            petRepository.deleteAll();
+            final String message = "SUCCESS DELETING ALL PET";
+            final String statusCode = "SUCCESS_DELETE_ALL_PET";
             var result = new FinalResult(true, message, statusCode, null);
             return new ResponseEntity<>(result, HttpStatus.NO_CONTENT);
         }catch (Exception e){
             System.out.print(e.toString());
             final String message = "DELETING FILE FAILED";
-            final String statusCode = "FAILED_DELETE_TUTORIAL";
+            final String statusCode = "FAILED_DELETE_PET";
             var result = new FinalResult(false, message, statusCode, null);
             return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
         }
     }
 
-    @GetMapping("/tutorial")
-    public ResponseEntity<FinalResult<List<Tutorial>>> findByPublished() {
+    @GetMapping("/pet")
+    public ResponseEntity<FinalResult<List<Pet>>> findByPublished() {
         try {
-            List<Tutorial> tutorials = tutorialRepository.findByPublished(true);
+            List<Pet> tutorials = petRepository.findByPublished(true);
 
             if (tutorials.isEmpty()) {
                 final String message = "THE DATA IS EMPTY";

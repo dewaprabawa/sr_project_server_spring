@@ -8,6 +8,7 @@ import learn_rest.example.tell_me_this_will_work.auth.service.UserDetailsImpl;
 import learn_rest.example.tell_me_this_will_work.firebaseConfig.FirebaseConfig;
 import learn_rest.example.tell_me_this_will_work.helper.FinalResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -34,40 +35,68 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-
-    @GetMapping("/user")
-    public ResponseEntity<?> getCurrentUser() {
+    @GetMapping(value = "/user")
+    public ResponseEntity<FinalResult> getCurrentUser() {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String jwt = jwtUtils.generateJwtToken(authentication);
+        Object principal = authentication.getPrincipal();
+        UserDetailsImpl userDetails = (UserDetailsImpl) principal;
+        Optional<User> user = userRepository.findByUsername(userDetails.getUsername());
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(item -> item.getAuthority())
-                .collect(Collectors.toList());
+        if (user.isPresent()) {
+            System.out.println(user.get().getId());
+            System.out.println(user.get().getId());
+            System.out.println(user.get().getUsername());
+            System.out.println(user.get().getEmail());
+            System.out.println(user.get().getCountryCode());
+            System.out.println(user.get().getPhoneNumber());
 
-        ResponseEntity<UserResponse> ok = ResponseEntity.ok(new UserResponse(jwt,
-                userDetails.getId(),
-                userDetails.getUsername(),
-                userDetails.getEmail(),
-                roles));
-        return ok;
+            List<String> roles = userDetails.getAuthorities().stream()
+                    .map(item -> item.getAuthority())
+                    .collect(Collectors.toList());
+            String message = "Successfully get current user";
+            String statusCode = "CURRENT_USER_SUCCESS";
+            String jwt = jwtUtils.generateJwtToken(authentication);
+
+            return new ResponseEntity<>(new FinalResult(true, message, statusCode, new UserResponse(jwt,
+                    user.get().getId(),
+                    user.get().getUsername(),
+                    user.get().getEmail(),
+                    roles,
+                    user.get().getProfileImageUrl(),
+                    user.get().getCountryCode(),
+                    user.get().getPhoneNumber()
+                    )), HttpStatus.OK);
+        } else {
+            String message = "Failed get current user";
+            String statusCode = "USER_NOT_FOUND";
+            boolean success = false;
+            var finalResult = new FinalResult(
+                    success,
+                    statusCode,
+                    message,
+                    null
+            );
+            return new ResponseEntity<>(finalResult, HttpStatus.NOT_FOUND);
+        }
     }
 
 
-    @PostMapping("/uploadImageProfile")
+    @PostMapping("/user/uploadImageProfile")
     public ResponseEntity<FinalResult<?>> create(@RequestParam(name = "file") MultipartFile file) throws FailedUploadImageException {
         try {
-            String fileName = firebaseFileService.uploadFileToStorage(file);
+            String fileName = firebaseFileService.save(file);
+            String imageUrl = firebaseFileService.getImageUrl(fileName);
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
             Optional<User> user = userRepository.findByUsername(userDetails.getUsername());
             if (user.isPresent()) {
-                user.get().setProfileImageUrl(fileName);
+                user.get().setProfileImageUrl(imageUrl);
                 userRepository.save(user.get());
                 String message = "User profile image uploaded successfully";
                 String statusCode = "UPLOAD_IMAGE_SUCCESS";
-                var finalResult = new FinalResult(true, message, statusCode, user);
+                var uploadedProfilePicture = user.get().getProfileImageUrl();
+                var finalResult = new FinalResult(true, message, statusCode, uploadedProfilePicture);
                 return new ResponseEntity<>(finalResult, HttpStatus.CREATED);
             } else {
                 String message = "User not found";
@@ -95,3 +124,4 @@ class FailedUploadImageException extends Exception {
         this.message = message;
     }
 }
+

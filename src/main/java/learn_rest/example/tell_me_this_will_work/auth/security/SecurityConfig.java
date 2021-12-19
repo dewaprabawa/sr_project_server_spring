@@ -24,7 +24,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailServiceImpl userDetailsService;
 
-
     @Autowired
     private CustomLogoutHandler customLogoutHandler;
 
@@ -56,11 +55,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeRequests().antMatchers("/api/auth/**").
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS).and()
+                .authorizeRequests().antMatchers("*").
                 permitAll().
                 and().logout().
-                logoutUrl("api/auth/logout").
                 addLogoutHandler(customLogoutHandler).
                 invalidateHttpSession(true);
 
