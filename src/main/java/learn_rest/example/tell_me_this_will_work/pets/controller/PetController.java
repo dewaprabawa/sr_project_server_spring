@@ -56,11 +56,11 @@ public class PetController {
     @GetMapping("/pet/{id}")
     public ResponseEntity<FinalResult<Pet>> getPetById(@PathVariable("id") String id) {
        try{
-           Optional<Pet> tutorial = petRepository.findById(id);
-           if(tutorial.isPresent()){
+           Optional<Pet> pet = petRepository.findById(id);
+           if(pet.isPresent()){
                String message = "SUCCESS GET SPECIFIC PET";
                String statusCode = "SUCCESS_GET_PET";
-               Pet data = tutorial.get();
+               Pet data = pet.get();
                var result = new FinalResult(true, message, statusCode, data);
                return new ResponseEntity<>(result, HttpStatus.OK);
            }else{
