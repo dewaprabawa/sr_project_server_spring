@@ -7,7 +7,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Category {
     @Id
     private String id;
-
+    private String category;
+    private String image;
     public String getId() {
         return id;
     }
@@ -31,7 +32,4 @@ public class Category {
     public void setImage(String image) {
         this.image = image;
     }
-
-    private String category;
-    private String image;
 }
